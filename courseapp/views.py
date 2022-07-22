@@ -4,12 +4,15 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from .models import Module, ModuleTag, Category, Course, Role, ModuleAttachement, ModuleContent, \
+from rest_framework_simplejwt.views import TokenObtainPairView
+
+from .models import Module, ModuleTag, Category, Course, ModuleAttachement, ModuleContent, \
     ModuleComment, ModuleMember
-from .serializers import ModuleSerializer, ModuleTagSerializer,  \
+from .serializers import ModuleSerializer, ModuleTagSerializer, \
     ModuleAttachementSerializer, \
-    CategorySerializer, CourseSerializer, RoleSerializer, RegisterSerializer, \
-    ModuleContentSerializer, ModuleCommentSerializer, ModuleMemberSerializer
+    CategorySerializer, CourseSerializer, RegisterSerializer, \
+    ModuleContentSerializer, ModuleCommentSerializer, ModuleMemberSerializer, UserSerializer, \
+    CustomTokenObtainPairSerializer
 
 from rest_framework.viewsets import ModelViewSet
 
@@ -34,16 +37,8 @@ class RegisterUserAPIView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
 
 
-""" role """
-
-
-class RoleView(ModelViewSet):
-    serializer_class = RoleSerializer
-    permission_classes = (IsAuthenticated,)
-    queryset = Role.objects.all()
-
-    def get_serializer_context(self):
-        return {'user_id': self.request.user.id}
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
 
 
 """ Category """
@@ -131,4 +126,4 @@ class ModuleMemberView(ModelViewSet):
     queryset = ModuleMember.objects.all()
 
     def get_serializer_context(self):
-        return {'user_id': self.request.us}
+        return {'user_id': self.request.user.id}

@@ -82,7 +82,7 @@ WSGI_APPLICATION = 'CourseAssessment.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'experdata',
+        'NAME': 'Apidata',
         'USER': 'root',
         'PASSWORD': 'Zaigo@25',
         'HOST': '127.0.0.1',

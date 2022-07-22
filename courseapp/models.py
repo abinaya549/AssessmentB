@@ -1,7 +1,6 @@
 # Create your models here.
 import uuid
 
-from django.core.validators import MaxValueValidator
 from django.db import models
 from django.contrib.auth.models import User
 from .validators import validate_video_extension, validate_size_mb
@@ -21,26 +20,6 @@ class EmailBackend(ModelBackend):
             if user.check_password(password):
                 return user
         return None
-
-
-""" Role """
-
-
-class Role(models.Model):
-    role_id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False)
-    role_name = models.CharField(max_length=256)
-    role_description = models.CharField(max_length=256)
-    level = models.IntegerField(default=1, validators=[MaxValueValidator(8)])
-    # right = models.ForeignKey('', related_name='permission', on_delete=models.SET_NULL, null=True)
-    created_by = models.ForeignKey(User, related_name='role_user', on_delete=models.SET_NULL, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.role_name
 
 
 """ category """
@@ -71,7 +50,7 @@ class Course(models.Model):
     document = models.FileField(null=True, blank=True, upload_to='images/')
     start_date = models.DateField()
     end_date = models.DateField()
-    # member_name = models.ForeignKey('Member', related_name='member', on_delete=models.SET_NULL, null=True)
+    assignee_name = models.ForeignKey(User, related_name='course_member', on_delete=models.SET_NULL, null=True)
     description = models.CharField(max_length=256)
     created_by = models.ForeignKey(User, related_name='course_user', on_delete=models.SET_NULL, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -93,6 +72,7 @@ class Module(models.Model):
     parent_id = models.ForeignKey('self', related_name='children', on_delete=models.SET_NULL, null=True)
     course_id = models.ForeignKey('Course', related_name='course_module', on_delete=models.SET_NULL, null=True)
     level = models.IntegerField(default=1)
+    member_name = models.ForeignKey(User, related_name='module_member', on_delete=models.SET_NULL, null=True)
     created_by = models.ForeignKey(User, related_name='module_user', on_delete=models.SET_NULL, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -172,7 +152,7 @@ class ModuleComment(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 
-"""Module member"""
+""" course module member """
 
 
 class ModuleMember(models.Model):
@@ -184,8 +164,8 @@ class ModuleMember(models.Model):
     course_id = models.ForeignKey('Course', related_name='course_module_member', on_delete=models.SET_NULL, null=True)
     start_date = models.DateField()
     end_date = models.DateField()
-    # member_name = models.ForeignKey('Member', related_name='module_member', on_delete=models.SET_NULL, null=True)
-    select_role = models.ForeignKey('Role', related_name='module_role', on_delete=models.SET_NULL, null=True)
+    assignee = models.ForeignKey(User, related_name='course_module_member_user', on_delete=models.SET_NULL, null=True)
     created_by = models.ForeignKey(User, related_name='module_member_user', on_delete=models.SET_NULL, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    # select_role = models.ForeignKey(User, related_name='module_role', on_delete=models.SET_NULL, null=True)

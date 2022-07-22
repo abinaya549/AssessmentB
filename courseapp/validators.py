@@ -2,6 +2,8 @@ import os
 
 from django.core.exceptions import ValidationError
 
+""" validation for module attachement """
+
 
 def validate_video_extension(value):
     ext = os.path.splitext(value.name)[1]  # [0] returns path+filename
